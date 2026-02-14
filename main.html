@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day Surprise</title>
+    <link rel="stylesheet" href="main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Happy Valentine's Day!</h1>
+            <p>A little something special, just for you. 💖</p>
+        </header>
+
+        <section class="love-meter">
+            <h2>Our Love Meter</h2>
+            <p>Slide to see how compatible we are!</p>
+            <input type="range" id="love-slider" min="0" max="100" value="50">
+            <div id="score-display">50%</div>
+            <p id="message-display">Slide to find out!</p>
+        </section>
+
+        <section class="message-generator">
+            <h2>Romantic Message</h2>
+            <button id="generate-btn">Generate a Sweet Note</button>
+            <p id="romantic-message">Click the button for some love!</p>
+        </section>
+
+        <footer>
+            <p>Made with ❤️ and a touch of magic.</p>
+        </footer>
+    </div>
+
+    <div id="hearts-container"></div>
+
+    <script src="main.js"></script>
+</body>
+
+</html>

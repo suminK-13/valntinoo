@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Surprise</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Quicksand:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --bg-color: #ffeef2;
+            --text-color: #590d22;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 100%);
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 50px;
+            border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(255, 77, 109, 0.2);
+            position: relative;
+            z-index: 1;
+            max-width: 500px;
+            width: 90%;
+            border: 2px solid white;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            color: var(--primary);
+            font-family: 'Great Vibes', cursive;
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0px rgba(255, 200, 200, 0.5);
+        }
+
+        #message-text {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            line-height: 1.6;
+            margin-top: 20px;
+            font-weight: 600;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+            margin-top: 30px;
+            height: 60px;
+            /* Space for buttons */
+            position: relative;
+        }
+
+        button {
+            padding: 12px 35px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        #yesBtn {
+            background: linear-gradient(45deg, #ff4d6d, #ff8fa3);
+            color: white;
+            z-index: 10;
+        }
+
+        #yesBtn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(255, 77, 109, 0.4);
+        }
+
+        #noBtn {
+            background-color: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            position: absolute;
+            /* Allows it to move freely */
+            transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Initial position for No button (relative to container logic handled by JS) */
+        /* Note: JS sets top/left, so we just style it here */
+
+        .hidden {
+            display: none;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container" id="mainCard">
+        <h1 id="question">Will you be my Valentine? ❤️</h1>
+
+        <div class="buttons" id="btnContainer">
+            <button id="yesBtn">Yes! 💖</button>
+            <button id="noBtn" style="position: relative;">No 😢</button>
+        </div>
+
+        <div id="successContent" class="hidden">
+            <h1 style="font-size: 2.5rem;">Yay! I knew it! 🌹</h1>
+            <p id="message-text"></p>
+        </div>
+    </div>
+
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const btnContainer = document.getElementById('btnContainer');
+        const successContent = document.getElementById('successContent');
+        const question = document.getElementById('question');
+        const messageText = document.getElementById('message-text');
+
+        // New Random Messages every time
+        const cuteMessages = [
+            "My dearest, you just made me the happiest person alive! 🥰 every moment with you is a beautiful adventure that I never want to end. Thank you for being my Valentine and my everything.",
+            "Yay! Get ready for a day filled with chocolates, flowers, and lots of love! 🍫🌹 You deserve all the happiness in the world, and I promise to spend every day trying to make you smile.",
+            "I promise to make today (and every day) special for you! ✨ You bring so much light into my life, and I am so incredibly grateful to have you by my side. Happy Valentine's Day!",
+            "You are my favorite notification and my favorite person! 💌 My heart skips a beat every time I see you. Here's to us and to a love that grows stronger with each passing day.",
+            "My heart is doing a happy dance right now! 💃❤️ There is no one else I would rather share this day with. You are my best friend, my rock, and my true love.",
+            "Official warning: You are now stuck with me forever! 😉 But don't worry, I promise to make it the best forever you could ever imagine. I love you more than words can say.",
+            "Best decision you've made all day! I love you! 💖 You are the missing piece to my puzzle, the melody to my song, and the love of my life. Thank you for saying Yes!",
+            "Let's make some beautiful memories together! 📸 Life is so much better with you in it. I can't wait to see what the future holds for us. Happy Valentine's Day!",
+            "You + Me = The Perfect Match 🔥 I am so lucky to call you mine. Let's celebrate our love today and everyday. You are simply amazing."
+        ];
+
+        // Ensure "No" button starts next to "Yes" button
+        // Logic handled by CSS static position initially
+
+        // Function to move "No" button randomly in a small space
+        function moveButton() {
+            // Keep it absolute relative to the container
+            noBtn.style.position = 'absolute';
+
+            // Get container dimensions
+            const containerRect = document.querySelector('.container').getBoundingClientRect();
+            const btnRect = noBtn.getBoundingClientRect();
+
+            // Calculate random position WITHIN the container
+            const maxX = containerRect.width - btnRect.width - 20;
+            const maxY = containerRect.height - btnRect.height - 20;
+
+            const x = Math.random() * maxX;
+            const y = Math.random() * maxY;
+
+            noBtn.style.left = x + 'px';
+            noBtn.style.top = y + 'px';
+
+            // Add variety to the button's appearance and text
+            const phrases = ["Nope!", "Try again!", "Too slow!", "Missed me!", "Still No?", "Nice try!", "Almost!", "Oops!"];
+            noBtn.innerText = phrases[Math.floor(Math.random() * phrases.length)];
+
+            // Random rotation for fun
+            const randomRotation = (Math.random() - 0.5) * 40; // +/- 20 degrees
+            noBtn.style.transform = `rotate(${randomRotation}deg)`;
+
+            // Random background color for extra difference
+            const colors = ['#f8f9fa', '#e9ecef', '#dee2e6', '#ced4da', '#ffccd5', '#fff0f3'];
+            noBtn.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        noBtn.addEventListener('mouseover', moveButton);
+        noBtn.addEventListener('touchstart', moveButton); // For mobile
+        noBtn.addEventListener('click', moveButton); // Just in case they click fast
+
+        // Function for "Yes" button
+        yesBtn.addEventListener('click', () => {
+            // Hide buttons and title
+            question.style.display = 'none';
+            btnContainer.style.display = 'none';
+
+            // Show success message
+            successContent.classList.remove('hidden');
+            successContent.classList.add('fade-in');
+
+            // Pick a random message
+            const randomMsg = cuteMessages[Math.floor(Math.random() * cuteMessages.length)];
+            messageText.innerText = randomMsg;
+
+            // Celebration effects
+            document.body.style.background = 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%)';
+            launchConfetti();
+        });
+
+        function launchConfetti() {
+            var duration = 3000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#ff4d6d', '#ff8fa3', '#ffffff']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#ff4d6d', '#ff8fa3', '#ffffff']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+    </script>
+</body>
+
+</html>

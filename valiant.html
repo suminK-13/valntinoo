@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be My Valentine?</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Quicksand:wght@300;400;700&family=Caveat:wght@400;700&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+
+    <!-- Background Canvas for Hearts -->
+    <canvas id="hearts-canvas"></canvas>
+
+    <!-- Main Container -->
+    <div class="container">
+
+        <!-- ENVELOPE SECTION (Hidden initially) -->
+        <div id="envelope-section" class="hidden">
+            <div class="envelope-wrapper">
+                <div class="envelope">
+                    <div class="front flap"></div>
+                    <div class="front pocket"></div>
+                    <div class="letter">
+                        <div class="text">
+                            <strong>To:</strong> <span id="recipient-name">My Love</span>
+                        </div>
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="heart-seal"><i class="fas fa-heart"></i></div>
+                </div>
+            </div>
+            <p class="click-instruction">Click the envelope to open... <br><small>(or wait 5 seconds)</small></p>
+        </div>
+
+        <div class="card glass" id="main-card">
+            <!-- Initial Input Section -->
+            <div id="input-section">
+                <h1 class="title">Hello There! <i class="fas fa-heart text-red"></i></h1>
+                <p class="subtitle">I have a special message just for you...</p>
+
+                <div class="input-group">
+                    <input type="text" id="name-input" placeholder="Enter your beautiful name" autocomplete="off">
+                </div>
+
+                <button id="reveal-btn" class="btn pulse">
+                    See Your Surprise <i class="fas fa-envelope-open-text"></i>
+                </button>
+            </div>
+
+            <!-- Message Section (Hidden by default) -->
+            <div id="message-section" class="hidden">
+                <h1 class="title">Happy Valentine's Day, <span id="user-name" class="highlight"></span>!</h1>
+
+                <div class="message-container">
+                    <p id="typewriter-text"></p>
+                </div>
+
+                <!-- NEW: Question Section -->
+                <div id="question-section" class="hidden">
+                    <h2 class="question-title">Will you be my Valentine? 🌹</h2>
+                    <div class="button-container">
+                        <button id="yes-btn" class="btn yes-btn">Yes, I'd love to! 💖</button>
+                        <button id="no-btn" class="btn no-btn">No 😢</button>
+                    </div>
+                </div>
+
+                <div class="love-note hidden" id="final-signature">
+                    With all my love <i class="fas fa-kiss-wink-heart"></i>
+                </div>
+
+                <button id="reset-btn" class="btn secondary hidden">
+                    Watch Again <i class="fas fa-redo"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <!-- Main Script -->
+    <script src="script.js"></script>
+</body>
+
+</html>

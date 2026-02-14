@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Message For You</title>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Quicksand:wght@300;400;700&family=Caveat:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --secondary: #ff8fa3;
+            --bg: linear-gradient(135deg, #fff0f3 0%, #ffccd5 100%);
+            --envelope-main: #ff8fa3;
+            --envelope-flap: #ff4d6d;
+            --envelope-gradient: #ff758f;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg);
+            margin: 0;
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
+            flex-direction: column;
+        }
+
+        /* --- THE ENVELOPE --- */
+        .envelope-container {
+            position: relative;
+            width: 320px;
+            height: 220px;
+            background: var(--envelope-main);
+            border-radius: 0 0 10px 10px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s, opacity 0.5s;
+            /* Added opacity opacity for fade out */
+            margin-top: 50px;
+        }
+
+        .envelope-container:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Triangle Flap */
+        .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-top: 120px solid var(--envelope-flap);
+            transform-origin: top;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.2s;
+            z-index: 5;
+        }
+
+        /* Pockets */
+        .pocket {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 160px solid var(--envelope-main);
+            border-right: 160px solid var(--secondary);
+            border-bottom: 110px solid var(--envelope-gradient);
+            z-index: 3;
+            border-radius: 0 0 10px 10px;
+        }
+
+        /* The Card Inside */
+        .letter-card {
+            position: absolute;
+            bottom: 0;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            background: white;
+            border-radius: 5px;
+            z-index: 2;
+            transition: all 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            /* Smooth expand */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 20px;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            overflow: hidden;
+        }
+
+        /* Expanded State for the Card */
+        /* It breaks out of the envelope and takes center stage */
+        .envelope-container.open .letter-card.expanded {
+            position: fixed;
+            /* Fixed to viewport */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1) !important;
+            width: 90vw;
+            max-width: 600px;
+            height: auto;
+            max-height: 80vh;
+            z-index: 100;
+            /* On top of everything */
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            border: 5px solid #ffccd5;
+            padding: 40px;
+            overflow-y: auto;
+            /* Scroll if needed */
+        }
+
+        .letter-card h3 {
+            font-family: 'Great Vibes', cursive;
+            color: #c9184a;
+            margin: 0 0 20px 0;
+            font-size: 2.5rem;
+            display: none;
+            /* Hide initial title when expanding */
+        }
+
+        .letter-card.expanded h3 {
+            display: block;
+            /* Show title when expanded */
+        }
+
+        /* Message Logic */
+        #typewriter-text {
+            font-family: 'Caveat', cursive;
+            font-size: 1.5rem;
+            line-height: 1.6;
+            color: #590d22;
+            text-align: left;
+            white-space: pre-wrap;
+            width: 100%;
+            display: none;
+            /* Hidden until expanded */
+        }
+
+        .letter-card.expanded #typewriter-text {
+            display: block;
+        }
+
+        /* Flashing Cursor */
+        #typewriter-text::after {
+            content: '|';
+            animation: blink 0.7s infinite;
+            color: #ff4d6d;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* Heart Seal */
+        .heart-seal {
+            position: absolute;
+            top: 52%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 6;
+            color: #d90429;
+            font-size: 3.5rem;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: opacity 0.4s;
+            cursor: pointer;
+        }
+
+        /* Open State classes */
+        .envelope-container.open .flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        .envelope-container.open .heart-seal {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Initial pop up before expansion */
+        .envelope-container.open .letter-card {
+            transform: translateY(-50px);
+            z-index: 10;
+        }
+
+        .instruction {
+            margin-top: 20px;
+            color: #800f2f;
+            font-weight: bold;
+            opacity: 0.8;
+            font-size: 1rem;
+            animation: pulse 2s infinite;
+            position: absolute;
+            bottom: 20px;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.6;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.6;
+            }
+        }
+
+        /* Close Button for Card */
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #ff4d6d;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: none;
+        }
+
+        .letter-card.expanded .close-btn {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="envelope-container" id="envelope">
+        <div class="flap"></div>
+        <div class="pocket"></div>
+
+        <!-- The Card Pops Up -->
+        <div class="letter-card" id="letter-card">
+            <button class="close-btn" onclick="location.reload()"><i class="fas fa-times"></i></button>
+            <h3>My Dearest Love...</h3>
+            <!-- This text appears initially then gets replaced/appended by typewriter -->
+            <p id="preview-text" style="color: #999; font-style: italic;">(Reading...)</p>
+            <i class="fas fa-heart" id="mini-heart" style="color: #ff4d6d; font-size: 1.5rem; margin-top: 10px;"></i>
+
+            <!-- Typewriter Area -->
+            <p id="typewriter-text"></p>
+        </div>
+
+        <div class="heart-seal"><i class="fas fa-heart"></i></div>
+    </div>
+
+    <!-- Countdown Text -->
+    <p class="instruction" id="timer-text">Opening in 40 seconds...</p>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+        const envelope = document.getElementById('envelope');
+        const letterCard = document.getElementById('letter-card');
+        const timerText = document.getElementById('timer-text');
+        const typewriterText = document.getElementById('typewriter-text');
+        const previewText = document.getElementById('preview-text');
+        const miniHeart = document.getElementById('mini-heart');
+
+        const fullMessage = `To the person who holds my heart,
+
+I wanted to take a moment to tell you just how incredibly special you are to me. There are no words to describe how much light you bring into my life.
+
+Every single day with you feels like a gift I cherish with all my soul. Your smile has the power to brighten my darkest days, and your laughter is the sweetest melody I've ever known.
+
+Thank you for being my rock, my joy, and my greatest adventure. I promise to love you through all of life's ups and downs, to support your dreams as if they were my own, and to make you smile every chance I get.
+
+Happy Valentine's Day.
+
+Forever and always yours. ❤️`;
+
+        let timeLeft = 40;
+        let isOpen = false;
+        let timerInterval;
+
+        // Auto-open timer
+        timerInterval = setInterval(() => {
+            if (isOpen) {
+                clearInterval(timerInterval);
+                return;
+            }
+
+            timeLeft--;
+            if (timeLeft > 0) {
+                timerText.textContent = `Opening automatically in \${timeLeft}...`;
+            } else {
+                timerText.textContent = "Opening...";
+                openEnvelope();
+            }
+        }, 1000);
+
+        function openEnvelope() {
+            if (isOpen) return;
+            isOpen = true;
+            clearInterval(timerInterval);
+
+            timerText.style.display = 'none'; // Hide timer
+            envelope.classList.add('open');   // Animate envelope open
+
+            launchConfetti();
+
+            // Sequence:
+            // 1. Envelope opens, card pops up slightly (CSS transition)
+            // 2. Wait 0.5s, then Expand Card to fullscreen
+            setTimeout(() => {
+                expandCard();
+            }, 800);
+        }
+
+        function expandCard() {
+            letterCard.classList.add('expanded');
+            previewText.style.display = 'none'; // Hide "Reading..."
+            miniHeart.style.display = 'none';
+
+            // Wait for expansion animation to finish (1s) before typing
+            setTimeout(() => {
+                startTypewriter();
+            }, 1000);
+        }
+
+        // Typewriter Effect
+        function startTypewriter() {
+            let index = 0;
+            const speed = 40;
+
+            function type() {
+                if (index < fullMessage.length) {
+                    typewriterText.textContent += fullMessage.charAt(index);
+                    index++;
+                    // letterCard.scrollTop = letterCard.scrollHeight; // Auto-scroll
+                    setTimeout(type, speed);
+                } else {
+                    launchConfetti();
+                }
+            }
+            type();
+        }
+
+        envelope.addEventListener('click', openEnvelope);
+
+        function launchConfetti() {
+            var duration = 2000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#ff4d6d', '#ff8fa3', '#ffffff']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#ff4d6d', '#ff8fa3', '#ffffff']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+    </script>
+</body>
+
+</html>
